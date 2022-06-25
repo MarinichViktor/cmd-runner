@@ -14,12 +14,14 @@ export class ElectronService {
   webFrame: typeof webFrame;
   childProcess: typeof childProcess;
   fs: typeof fs;
+  dialog: typeof Electron.dialog;
 
   constructor() {
     // Conditional imports
     if (this.isElectron) {
       this.ipcRenderer = window.require('electron').ipcRenderer;
       this.webFrame = window.require('electron').webFrame;
+      this.dialog = window.require('electron').dialog;
 
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');

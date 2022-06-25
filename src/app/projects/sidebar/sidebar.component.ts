@@ -3,6 +3,7 @@ import { ProjectContext } from '../project.context';
 import { Project } from '../project';
 import { filter, tap } from 'rxjs';
 import { ProjectService } from '../project.service';
+import { ElectronService } from '../../electron.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,7 +13,7 @@ import { ProjectService } from '../project.service';
 export class SidebarComponent implements OnInit {
   selectedProject: Project;
 
-  constructor(readonly projectContext: ProjectContext, readonly projectService: ProjectService) { }
+  constructor(readonly projectContext: ProjectContext, readonly projectService: ProjectService, readonly electronService: ElectronService) { }
 
   ngOnInit(): void {
     this.projectContext.selectionChange$

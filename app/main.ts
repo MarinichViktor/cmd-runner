@@ -1,8 +1,9 @@
-import { app, BrowserWindow, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, ipcMain, dialog, Menu } from 'electron';
 import * as path                               from 'path';
 import * as fs                                 from 'fs';
 import * as url                    from 'url';
 import { ChildProcess, spawn }                                  from 'child_process';
+
 // import { CMD_DATA, CMD_ERR, CMD_EXIT, CmdInterface, SPAWN_CMD } from '../src/app/core/services/command/command.service';
 export const SPAWN_CMD = 'spawn';
 export const SPAWN_CMD_OK = 'spawn-ok';
@@ -115,7 +116,46 @@ try {
       // } else {
       //   console.log('command not connected');
       // }
-    })
+    });
+    ipcMain.on("open-file", event => {
+      // event.returnValue = cmd.name;
+      const files = dialog.showOpenDialogSync(win);
+      console.log('files', files)
+      let result: string;
+
+      if (files.length > 0) {
+        const data = fs.readFileSync(files[0]);
+        result = JSON.parse(data.toString('utf8'));
+      }
+
+      event.returnValue = result;
+    });
+
+    const menu = Menu.buildFromTemplate([
+      {
+        label: 'File',
+        submenu: [
+          {
+            label: 'Load projects',
+            click: async () => {
+              const files = dialog.showOpenDialogSync(win);
+              console.log('files', files)
+              let result: string;
+
+              if (files.length > 0) {
+                const data = fs.readFileSync(files[0]);
+                result = JSON.parse(data.toString('utf8'));
+
+                console.log('send result', result);
+                window.webContents.send("load-projects", result);
+              }
+            }
+          },
+          process.platform === 'darwin' ? { role: 'close' } : { role: 'quit' },
+        ]
+      }
+      ]);
+    Menu.setApplicationMenu(menu);
   });
 
   // Quit when all windows are closed.

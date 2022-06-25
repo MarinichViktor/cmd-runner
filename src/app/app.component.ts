@@ -1,8 +1,11 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import {flatMap, from, interval, Subject} from "rxjs";
 import {LINES} from "./constants";
 import {DomSanitizer} from "@angular/platform-browser";
 import { Terminal } from 'xterm';
+import { ElectronService } from './electron.service';
+import { Project } from './projects/project';
+import { ProjectContext } from './projects/project.context';
 
 
 @Component({
@@ -17,7 +20,14 @@ export class AppComponent implements OnInit {
   items: string[] = []
   term = new Terminal({cols: 125, rows: 50});
 
-  constructor(readonly sanitizer: DomSanitizer) {
+  constructor(readonly electronService: ElectronService, readonly projectContext: ProjectContext, private ngZone: NgZone) {
+    this.electronService.ipcRenderer.on("load-projects", (event, projects) => {
+      this.ngZone.run(() => {
+        this.projectContext.projects = Object.entries(projects as {[key: string]: any}).map(([key, value]) => {
+          return new Project(key, value.cmd, value.dir)
+        });
+      });
+    });
   }
 
   // ngAfterViewInit(): void {

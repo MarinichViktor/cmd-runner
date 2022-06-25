@@ -1,0 +1,10 @@
+{
+  "ng serve": {
+    "cmd": "ng serve --port 5000",
+    "dir": "/home/vmaryn/projects/js/proj_runner"
+  },
+  "docker compose": {
+    "cmd": "docker compose up",
+    "dir": "/home/vmaryn/projects/go/sandbox"
+  }
+}
