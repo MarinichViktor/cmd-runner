@@ -10,7 +10,7 @@ import { Terminal } from 'xterm';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit {
   title = 'project-runner';
 
   source = new Subject<string>();
@@ -20,32 +20,32 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(readonly sanitizer: DomSanitizer) {
   }
 
-  ngAfterViewInit(): void {
-    const lines = LINES.split("\n");
-    let i = 0 ;
-    this.term.open(document.getElementById('term') as HTMLElement);
-    this.term.write(LINES);
-    // const subs = interval(100).subscribe(() => {
-    //
-    //   // if (i > 200) {
-    //   //   console.log('called exited')
-    //   //   subs.unsubscribe();
-    //   // }
-    //
-    //   this.term.writeln(lines[i] + "\n", () => {
-    //     console.log('written line');
-    //   });
-    //   // console.log('called next')
-    //   // this.source.next(lines[i]);
-    //   // if (this.items.length > 100) {
-    //   //   this.items.shift();
-    //   // }
-    //   //
-    //   // this.items.push(line);
-    //   // document.querySelector('#some')?.scrollIntoView();
-    //   i++;
-    // });
-  }
+  // ngAfterViewInit(): void {
+  //   const lines = LINES.split("\n");
+  //   let i = 0 ;
+  //   this.term.open(document.getElementById('term') as HTMLElement);
+  //   this.term.write(LINES);
+  //   // const subs = interval(100).subscribe(() => {
+  //   //
+  //   //   // if (i > 200) {
+  //   //   //   console.log('called exited')
+  //   //   //   subs.unsubscribe();
+  //   //   // }
+  //   //
+  //   //   this.term.writeln(lines[i] + "\n", () => {
+  //   //     console.log('written line');
+  //   //   });
+  //   //   // console.log('called next')
+  //   //   // this.source.next(lines[i]);
+  //   //   // if (this.items.length > 100) {
+  //   //   //   this.items.shift();
+  //   //   // }
+  //   //   //
+  //   //   // this.items.push(line);
+  //   //   // document.querySelector('#some')?.scrollIntoView();
+  //   //   i++;
+  //   // });
+  // }
 
   ngOnInit() {
     // const lines = LINES.split("\n");

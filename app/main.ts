@@ -12,6 +12,7 @@ export const CMD_EXIT = 'exit';
 export const CMD_CLOSE = 'close';
 
 export interface CmdInterface {
+  name: string,
   cmd: string,
   dir: string
 }
@@ -28,8 +29,8 @@ function createWindow(): BrowserWindow {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: 800,
-    height: 600,
+    width: 1400,
+    height: 900,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
@@ -75,29 +76,45 @@ try {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  const commands : { id: number, cmd: ChildProcess }[] = [];
+  const commands : { [key: string]: ChildProcess} = {};
   app.whenReady().then(() => {
     const window = createWindow();
 
     ipcMain.on(SPAWN_CMD, (event, cmd: CmdInterface) => {
+      console.log('received new cmd')
       const comd = spawn("/bin/bash", ["-c", cmd.cmd], {
         cwd: cmd.dir
       });
-      const id = commands.length
-      commands.push({id, cmd: comd})
-      comd.stdout.on('data', (data: string) => {
-        window.webContents.send(`${CMD_DATA}:${id}`, data);
+
+      commands[cmd.name] = comd;
+      comd.stdout.on('data', (data: Uint8Array) => {
+        const strData = Buffer.from(data.buffer).toString()
+        window.webContents.send(`${CMD_DATA}:${cmd.name}`, strData);
       });
 
-      comd.stderr.on('data', (data: string) => {
-        window.webContents.send(`${CMD_ERR}:${id}`, data);
+      comd.stderr.on('data', (data: Uint8Array) => {
+        const strData = Buffer.from(data.buffer).toString()
+        window.webContents.send(`${CMD_ERR}:${cmd.name}`, strData);
       });
       comd.on('close', (code) => {
-        window.webContents.send(`${CMD_EXIT}:${id}`);
+        console.log('cmd close called');
+        window.webContents.send(`${CMD_EXIT}:${cmd.name}`);
       });
 
-      event.returnValue = "";
+      event.returnValue = cmd.name;
     });
+
+    ipcMain.on(CMD_CLOSE, (event, name: string) => {
+      const c = commands[name];
+      // if (c.connected) {
+        console.log('kill cmd');
+        commands[name].kill(9);
+      console.log('send exit');
+      window.webContents.send(`${CMD_EXIT}:${name}`);
+      // } else {
+      //   console.log('command not connected');
+      // }
+    })
   });
 
   // Quit when all windows are closed.

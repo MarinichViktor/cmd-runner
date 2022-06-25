@@ -1,0 +1,29 @@
+<!--<mat-drawer-container>-->
+<!--  <mat-drawer mode="side" opened>-->
+<!--     <app-sidebar></app-sidebar>-->
+<!--  </mat-drawer>-->
+<!--  <mat-drawer-content>-->
+<div>
+  <app-sidebar></app-sidebar>
+</div>
+<hr>
+    <h2> Active project: {{ selectedProject?.name }}</h2>
+
+    <div>
+      <button *ngIf="selectedProject?.isRunning" mat-raised-button color="primary" (click)="stopProject()">Stop project </button>
+      <button *ngIf="!selectedProject?.isRunning" mat-raised-button color="primary" (click)="startProject()">Start project </button>
+<!--      <div *ngIf="selectedProject?.isRunning; else notRunTemplate">-->
+        <div  style="" id="term2">
+          <div id="term"></div>
+        </div>
+<!--      </div>-->
+<!--      <ng-template #notRunTemplate>-->
+<!--        <div>Project not running</div>-->
+<!--      </ng-template>-->
+    </div>
+  <h2>Content</h2>
+<div>
+  {{ content }}
+</div>
+<!--  </mat-drawer-content>-->
+<!--</mat-drawer-container>-->

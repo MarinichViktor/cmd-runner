@@ -1,8 +1,7 @@
 import {Subject} from 'rxjs';
 
-export class Command {
+export class Process {
   constructor(readonly dataSource: Subject<string>,
-              readonly errSource: Subject<string>,
               readonly exitSource: Subject<void>,
               readonly closeSource: Subject<void>) {
   }

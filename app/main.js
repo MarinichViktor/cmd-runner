@@ -22,8 +22,8 @@ function createWindow() {
     win = new electron_1.BrowserWindow({
         x: 0,
         y: 0,
-        width: 800,
-        height: 600,
+        width: 1400,
+        height: 900,
         webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: (serve) ? true : false,
@@ -63,25 +63,39 @@ try {
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
     // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-    var commands_1 = [];
+    var commands_1 = {};
     electron_1.app.whenReady().then(function () {
         var window = createWindow();
         electron_1.ipcMain.on(exports.SPAWN_CMD, function (event, cmd) {
+            console.log('received new cmd');
             var comd = (0, child_process_1.spawn)("/bin/bash", ["-c", cmd.cmd], {
                 cwd: cmd.dir
             });
-            var id = commands_1.length;
-            commands_1.push({ id: id, cmd: comd });
+            commands_1[cmd.name] = comd;
             comd.stdout.on('data', function (data) {
-                window.webContents.send("".concat(exports.CMD_DATA, ":").concat(id), data);
+                var strData = Buffer.from(data.buffer).toString();
+                window.webContents.send("".concat(exports.CMD_DATA, ":").concat(cmd.name), strData);
             });
             comd.stderr.on('data', function (data) {
-                window.webContents.send("".concat(exports.CMD_ERR, ":").concat(id), data);
+                var strData = Buffer.from(data.buffer).toString();
+                window.webContents.send("".concat(exports.CMD_ERR, ":").concat(cmd.name), strData);
             });
             comd.on('close', function (code) {
-                window.webContents.send("".concat(exports.CMD_EXIT, ":").concat(id));
+                console.log('cmd close called');
+                window.webContents.send("".concat(exports.CMD_EXIT, ":").concat(cmd.name));
             });
-            event.returnValue = "";
+            event.returnValue = cmd.name;
+        });
+        electron_1.ipcMain.on(exports.CMD_CLOSE, function (event, name) {
+            var c = commands_1[name];
+            // if (c.connected) {
+            console.log('kill cmd');
+            commands_1[name].kill(9);
+            console.log('send exit');
+            window.webContents.send("".concat(exports.CMD_EXIT, ":").concat(name));
+            // } else {
+            //   console.log('command not connected');
+            // }
         });
     });
     // Quit when all windows are closed.
