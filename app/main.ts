@@ -107,9 +107,10 @@ try {
     ipcMain.on(CMD_CLOSE, (event, name: string) => {
       const c = commands[name];
       // if (c.connected) {
-        console.log('kill cmd');
-        commands[name].kill(9);
-      console.log('send exit');
+        console.log('kill cmd', commands[name].pid);
+        // commands[name].kill(9);
+      const res = process.kill(commands[name].pid, 2);
+      // console.log('send exit', res);
       window.webContents.send(`${CMD_EXIT}:${name}`);
       // } else {
       //   console.log('command not connected');

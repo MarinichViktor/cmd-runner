@@ -1,9 +1,9 @@
 import { Process } from '../process';
-import { Observable, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 
 export class Project {
   private _process?: Process;
-  started$ = new Subject<void>;
+  started$ = new ReplaySubject<void>(1);
   completed$ = new Subject<void>;
   data$: Observable<string>;
 

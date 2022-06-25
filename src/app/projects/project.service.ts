@@ -1,4 +1,4 @@
-import { Injectable }          from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Process }             from '../process';
 import { Observable, ReplaySubject, Subject, tap } from 'rxjs';
 import { ElectronService } from '../electron.service';
@@ -22,7 +22,7 @@ export interface CommandRunArgs {
   providedIn: 'root'
 })
 export class ProjectService {
-  constructor(private electron: ElectronService, private cmdContext: ProjectContext) {
+  constructor(private electron: ElectronService, private cmdContext: ProjectContext, private zone: NgZone) {
   }
 
   start(project: Project): Observable<Process> {
@@ -51,9 +51,15 @@ export class ProjectService {
       });
       this.electron.ipcRenderer.on(`${CMD_EXIT}:${id}`, (event,) => {
         console.log('new exit', `${CMD_DATA}:${id}`);
+        dataSource.next("\nCommand exited.... \n");
+        dataSource.complete();
+
         exitSource.next();
         exitSource.complete();
-        project.process = undefined;
+
+        this.zone.run(() => {
+          project.process = undefined;
+        });
       });
       const subscription = closeSource.subscribe(() => {
         this.electron.ipcRenderer.send(CMD_CLOSE, id);

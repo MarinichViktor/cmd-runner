@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectContext } from '../project.context';
 import { Project } from '../project';
+import { filter, tap } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,12 +9,23 @@ import { Project } from '../project';
   styleUrls: ['./sidebar.component.sass']
 })
 export class SidebarComponent implements OnInit {
-  constructor(readonly projectsContext: ProjectContext) { }
+  selectedProject: Project;
+
+  constructor(readonly projectContext: ProjectContext) { }
 
   ngOnInit(): void {
+    this.projectContext.selectionChange$
+      .pipe(
+        filter(p => !!p),
+        tap((project) => {
+          this.selectedProject = project;
+        })
+      )
+        .subscribe()
+
   }
 
   selectProject(project: Project) {
-    this.projectsContext.selectProject(project)
+    this.projectContext.selectProject(project)
   }
 }

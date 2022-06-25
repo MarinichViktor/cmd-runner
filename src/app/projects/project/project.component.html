@@ -1,0 +1,16 @@
+<div class="project-content">
+  <div *ngIf="selectedProject">
+    <h2> Active project: {{ selectedProject?.name }}</h2>
+    <button mat-mini-fab color="primary" (click)="startProject()" *ngIf="!selectedProject?.isRunning; else stopTempl">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <ng-template #stopTempl>
+      <button mat-mini-fab color="warn" (click)="stopProject()">
+        <mat-icon>stop</mat-icon>
+      </button>
+    </ng-template>
+  </div>
+  <div class="console-wrapper">
+    <div id="term"></div>
+  </div>
+</div>

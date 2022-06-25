@@ -1,5 +1,8 @@
 <mat-action-list>
-  <button mat-list-item *ngFor="let project of projectsContext.projects" (click)="selectProject(project)">
+  <button mat-list-item *ngFor="let project of projectContext.projects"
+          [class.is-running]="project.isRunning"
+          [class.is-active]="selectedProject == project"
+          (click)="selectProject(project)">
     {{ project.name }} {{ project.isRunning ? " - Active" : "" }}
   </button>
 </mat-action-list>

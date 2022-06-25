@@ -89,9 +89,10 @@ try {
         electron_1.ipcMain.on(exports.CMD_CLOSE, function (event, name) {
             var c = commands_1[name];
             // if (c.connected) {
-            console.log('kill cmd');
-            commands_1[name].kill(9);
-            console.log('send exit');
+            console.log('kill cmd', commands_1[name].pid);
+            // commands[name].kill(9);
+            var res = process.kill(commands_1[name].pid, 2);
+            // console.log('send exit', res);
             window.webContents.send("".concat(exports.CMD_EXIT, ":").concat(name));
             // } else {
             //   console.log('command not connected');
