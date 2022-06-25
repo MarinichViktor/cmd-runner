@@ -1,8 +1,29 @@
-<mat-action-list>
-  <button mat-list-item *ngFor="let project of projectContext.projects"
-          [class.is-running]="project.isRunning"
-          [class.is-active]="selectedProject == project"
-          (click)="selectProject(project)">
-    {{ project.name }} {{ project.isRunning ? " - Active" : "" }}
-  </button>
-</mat-action-list>
+<mat-list>
+  <div mat-subheader>Projects</div>
+  <ng-container  *ngFor="let project of projectContext.projects">
+    <mat-list-item
+      [class.is-running]="project.isRunning"
+      [class.is-active]="selectedProject == project"
+    >
+      <div class="project-item">
+        <button mat-button (click)="selectProject(project)" [class.is-active]="selectedProject == project">
+          {{ project.name }} {{ project.isRunning ? " - Active" : "" }}
+        </button>
+        <div class="project-item__actions">
+          <button mat-icon-button
+                  color="primary"
+                  [disabled]="project.isRunning"
+                  (click)="startProject(project)">
+            <mat-icon>play_circle</mat-icon>
+          </button>
+          <button mat-icon-button color="warn"
+                  [disabled]="!project.isRunning"
+                  (click)="stopProject(project)">
+            <mat-icon>stop_circle</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
+</mat-list>

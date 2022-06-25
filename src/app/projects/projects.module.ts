@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ProjectComponent } from './project/project.component';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
     CommonModule,
     MatCardModule,
     MatIconModule,
-    MatGridListModule
+    MatGridListModule,
+    MatToolbarModule
   ],
   declarations: [
     ProjectsComponent,
