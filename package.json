@@ -3,23 +3,31 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npm-run-all -p electron:serve ng:serve",
+    "ng:serve": "ng serve",
+    "electron:serve-tsc": "tsc -p tsconfig.serve.json",
+    "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
+  "main": "app/main.js",
   "private": true,
   "dependencies": {
     "@angular/animations": "^14.0.0",
+    "@angular/cdk": "^14.0.3",
     "@angular/common": "^14.0.0",
     "@angular/compiler": "^14.0.0",
     "@angular/core": "^14.0.0",
     "@angular/forms": "^14.0.0",
+    "@angular/material": "^14.0.3",
     "@angular/platform-browser": "^14.0.0",
     "@angular/platform-browser-dynamic": "^14.0.0",
     "@angular/router": "^14.0.0",
+    "ngx-electron": "^2.2.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
+    "xterm": "^4.18.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -27,12 +35,18 @@
     "@angular/cli": "~14.0.3",
     "@angular/compiler-cli": "^14.0.0",
     "@types/jasmine": "~4.0.0",
+    "electron": "^19.0.6",
+    "electron-builder": "^23.1.0",
+    "electron-debug": "^3.2.0",
+    "electron-reloader": "^1.2.3",
     "jasmine-core": "~4.1.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "typescript": "~4.7.2"
+    "npm-run-all": "^4.1.5",
+    "typescript": "~4.7.2",
+    "wait-on": "^6.0.1"
   }
 }
