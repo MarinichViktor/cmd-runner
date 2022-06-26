@@ -7,9 +7,12 @@
     "ng:serve": "ng serve",
     "electron:serve-tsc": "tsc -p tsconfig.serve.json",
     "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
+    "electron:run": "ng build --base-href ./ &&  npm run electron:serve-tsc && electron .",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:prod": "npm run build -- -c production",
+    "electron:build": "ng build --base-href ./ && npm run electron:serve-tsc  && electron-builder build -ml --publish=never"
   },
   "main": "app/main.js",
   "private": true,
