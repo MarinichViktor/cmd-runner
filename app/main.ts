@@ -69,19 +69,19 @@ function createWindow(): BrowserWindow {
 
   return win;
 }
+const commands : { [key: string]: ChildProcess} = {};
 
 try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  const commands : { [key: string]: ChildProcess} = {};
   app.whenReady().then(() => {
     const window = createWindow();
 
     ipcMain.on(SPAWN_CMD, (event, cmd: CmdInterface) => {
       console.log('received new cmd')
-      const comd = spawn("/bin/bash", ["-c", cmd.cmd], {
+      const comd = spawn("/bin/bash", ["-l", "-c", cmd.cmd], {
         cwd: cmd.dir
       });
 
@@ -105,16 +105,10 @@ try {
 
     ipcMain.on(CMD_CLOSE, (event, name: string) => {
       const c = commands[name];
-      // if (c.connected) {
-        console.log('kill cmd', commands[name].pid);
-        // commands[name].kill(9);
       const res = process.kill(commands[name].pid, 2);
-      // console.log('send exit', res);
       window.webContents.send(`${CMD_EXIT}:${name}`);
-      // } else {
-      //   console.log('command not connected');
-      // }
     });
+
     ipcMain.on("open-file", event => {
       // event.returnValue = cmd.name;
       const files = dialog.showOpenDialogSync(win);
@@ -160,9 +154,11 @@ try {
   app.on('window-all-closed', () => {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
+    Object.entries(commands).forEach(([_, cmd]) => {
+      process.kill(cmd.pid, 2);
+    });
+
+    app.quit();
   });
 
   app.on('activate', () => {
